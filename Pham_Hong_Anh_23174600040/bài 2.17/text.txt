@@ -1,0 +1,36 @@
+Để giải bài toán này, trước hết chúng ta cần hiểu rõ ý nghĩa của hàm f(x).
+
+1) Để f(x) là hàm mật độ xác suất của một biến ngẫu nhiên liên tục X, ta cần đảm bảo rằng:
+   - f(x) không âm cho mọi giá trị của x: f(x) ≥ 0
+   - Tổng diện tích dưới đường cong của hàm f(x) trên tất cả các giá trị của x bằng 1: ∫f(x)dx = 1
+
+Trong trường hợp này, hàm f(x) được định nghĩa như sau:
+- f(x) = a nếu x thuộc đoạn [0,1]
+- f(x) = 0 nếu x không thuộc đoạn [0,1]
+
+Ta cần tìm giá trị a sao cho f(x) là hàm mật độ của một biến ngẫu nhiên X.
+
+Do f(x) = a trên đoạn [0,1], ta cần tính tổng diện tích dưới đường cong của f(x) từ x = 0 đến x = 1 và đặt nó bằng 1:
+∫[0,1] f(x)dx = 1
+∫[0,1] a dx = 1
+a * ∫[0,1] dx = 1
+a * [x]_[0,1] = 1
+a * (1 - 0) = 1
+a = 1
+
+Vậy, f(x) = 1 nếu x thuộc đoạn [0,1].
+
+2) Để tính P(1/4 < x < 1/2), ta tính diện tích dưới đường cong của f(x) từ x = 1/4 đến x = 1/2:
+P(1/4 < x < 1/2) = ∫[1/4,1/2] f(x)dx = ∫[1/4,1/2] 1 dx = (1/2 - 1/4) * 1 = 1/4
+
+3) Hàm phân phối xác suất của biến ngẫu nhiên X được xác định bởi phân phối xác suất tích lũy (CDF - Cumulative Distribution Function), được định nghĩa là F(x) = P(X ≤ x).
+
+Trong trường hợp này, do f(x) = 1 cho mọi x thuộc [0,1], ta có:
+F(x) = ∫[-∞,x] f(t)dt = ∫[0,x] 1 dt = x nếu x thuộc đoạn [0,1]
+F(x) = 0 nếu x < 0
+F(x) = 1 nếu x > 1
+
+Vậy, hàm phân phối xác suất của X là:
+F(x) = x nếu x thuộc [0,1]
+F(x) = 0 nếu x < 0
+F(x) = 1 nếu x > 1
