@@ -1,31 +1,48 @@
-import numpy as np
-from scipy.integrate import quad
-
-# Hàm mật độ xác suất f(x)
-def mat_do_xac_suat(x):
+def pdf(x):
     if x <= 0:
         return 0
     elif 0 < x <= 2:
         return x / 4
-    else:
-        return 4 / x**3
+    else:  # x > 2
+        return 4 / (x ** 3)
+
+def cdf(x):
+    if x <= 0:
+        return 0
+    elif 0 < x <= 2:
+        return (x ** 2) / 8
+    else:  # x > 2
+        return 1 - 2 / (x ** 2)
 
 # 1. Tính xác suất chi cho y tế trong năm là trên 3 triệu đồng
-def ham_tich_phan_xac_suat_tren_3(x):
-    return mat_do_xac_suat(x)
-
-xac_suat_tren_3, _ = quad(ham_tich_phan_xac_suat_tren_3, 3, np.inf)
-print(f"Xác suất chi cho y tế trong năm là trên 3 triệu đồng: P(X > 3) = {xac_suat_tren_3}")
+def xac_suat_tren_3_trieu():
+    return 1 - cdf(3)
 
 # 2. Tính kỳ vọng và phương sai của chi cho y tế hàng năm
-def ham_tich_phan_ky_vong(x):
-    return x * mat_do_xac_suat(x)
+def ky_vong():
+    # Tích phân x * pdf(x) từ 0 đến vô cực
+    n = 10000  # số lượng phân đoạn
+    a, b = 0, 100  # giới hạn tích phân, b lớn hơn đủ để đại diện cho vô cực
+    dx = (b - a) / n
+    tong = 0
+    for i in range(n):
+        x = a + i * dx
+        tong += x * pdf(x) * dx
+    return tong
 
-def ham_tich_phan_ky_vong_x2(x):
-    return x**2 * mat_do_xac_suat(x)
+def phuong_sai():
+    ky_vong_val = ky_vong()
+    # Tích phân (x^2) * pdf(x) từ 0 đến vô cực
+    n = 10000  # số lượng phân đoạn
+    a, b = 0, 100  # giới hạn tích phân, b lớn hơn đủ để đại diện cho vô cực
+    dx = (b - a) / n
+    tong = 0
+    for i in range(n):
+        x = a + i * dx
+        tong += (x ** 2) * pdf(x) * dx
+    return tong - ky_vong_val**2
 
-ky_vong_X, _ = quad(ham_tich_phan_ky_vong, 0, np.inf)
-ky_vong_X2, _ = quad(ham_tich_phan_ky_vong_x2, 0, np.inf)
-phuong_sai_X = ky_vong_X2 - ky_vong_X**2
-print(f"Kỳ vọng E(X) = {ky_vong_X}")
-print(f"Phương sai Var(X) = {phuong_sai_X}")
+# Sử dụng ví dụ
+print("Xác suất chi cho y tế trong năm là trên 3 triệu đồng:", xac_suat_tren_3_trieu())
+print("Kỳ vọng của chi cho y tế hàng năm:", ky_vong())
+print("Phương sai của chi cho y tế hàng năm:", phuong_sai())

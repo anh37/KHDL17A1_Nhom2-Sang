@@ -1,54 +1,85 @@
-import numpy as np
-from scipy.integrate import quad
+def pdf(x):
+    if 2 < x <= 3:
+        return 2 * (x - 2)
+    return 0
 
-# Hàm mật độ xác suất f(x)
-def mat_do_xac_suat(x):
+def cdf(x):
+    if x <= 2:
+        return 0
+    elif 2 < x <= 3:
+        return (x - 2)**2
+    else:
+        return 1
+
+# 1. Tìm hàm mật độ xác suất của X
+def ham_mat_do(x):
     if 2 < x <= 3:
         return 2 * (x - 2)
     else:
         return 0
 
-# 1. Tìm hàm mật độ xác suất của X (đã có)
-print("Hàm mật độ xác suất f(x) đã được định nghĩa.")
-
-# 2. Tính P(1 < X < 1,6)
-def ham_tich_phan_P(x):
-    return mat_do_xac_suat(x)
-
-xac_suat_1_1_6, _ = quad(ham_tich_phan_P, 1, 1.6)
-print(f"P(1 < X < 1,6) = {xac_suat_1_1_6}")
+# 2. Tính P(1 < X < 1.6)
+def xac_suat(a, b):
+    return cdf(b) - cdf(a)
 
 # 3. Tính kỳ vọng và phương sai của X
-def ham_tich_phan_ky_vong(x):
-    return x * mat_do_xac_suat(x)
+def ky_vong():
+    # Tích phân x * pdf(x) từ 2 đến 3
+    n = 10000  # số lượng phân đoạn
+    a, b = 2, 3  # giới hạn tích phân
+    dx = (b - a) / n
+    tong = 0
+    for i in range(n):
+        x = a + i * dx
+        tong += x * pdf(x) * dx
+    return tong
 
-def ham_tich_phan_ky_vong_x2(x):
-    return x**2 * mat_do_xac_suat(x)
-
-ky_vong_X, _ = quad(ham_tich_phan_ky_vong, 2, 3)
-ky_vong_X2, _ = quad(ham_tich_phan_ky_vong_x2, 2, 3)
-phuong_sai_X = ky_vong_X2 - ky_vong_X**2
-print(f"Kỳ vọng E(X) = {ky_vong_X}")
-print(f"Phương sai Var(X) = {phuong_sai_X}")
+def phuong_sai():
+    ky_vong_val = ky_vong()
+    # Tích phân (x^2) * pdf(x) từ 2 đến 3
+    n = 10000  # số lượng phân đoạn
+    a, b = 2, 3  # giới hạn tích phân
+    dx = (b - a) / n
+    tong = 0
+    for i in range(n):
+        x = a + i * dx
+        tong += (x ** 2) * pdf(x) * dx
+    return tong - ky_vong_val**2
 
 # 4. Tìm Mode của X và các hệ số bất đối xứng, hệ số nhọn của X
-# Mode của X là điểm mà hàm mật độ xác suất đạt giá trị lớn nhất, trong khoảng (2, 3) hàm f(x) tăng dần nên Mode là 3.
-mode_X = 3
-print(f"Mode của X = {mode_X}")
+def mode():
+    return 3  # Vì hàm mật độ xác suất tăng dần trong khoảng (2, 3)
 
-# Hệ số bất đối xứng (Skewness)
-def ham_tich_phan_bat_doi_xung(x):
-    return ((x - ky_vong_X)**3) * mat_do_xac_suat(x)
+# Tính hệ số bất đối xứng và hệ số nhọn
+def he_so_bat_doi_xung():
+    ky_vong_val = ky_vong()
+    phuong_sai_val = phuong_sai()
+    n = 10000  # số lượng phân đoạn
+    a, b = 2, 3  # giới hạn tích phân
+    dx = (b - a) / n
+    tong = 0
+    for i in range(n):
+        x = a + i * dx
+        tong += ((x - ky_vong_val) ** 3) * pdf(x) * dx
+    return tong / (phuong_sai_val ** 1.5)
 
-he_so_bat_doi_xung, _ = quad(ham_tich_phan_bat_doi_xung, 2, 3)
-he_so_bat_doi_xung /= phuong_sai_X**(3/2)
-print(f"Hệ số bất đối xứng (Skewness) = {he_so_bat_doi_xung}")
+def he_so_nhon():
+    ky_vong_val = ky_vong()
+    phuong_sai_val = phuong_sai()
+    n = 10000  # số lượng phân đoạn
+    a, b = 2, 3  # giới hạn tích phân
+    dx = (b - a) / n
+    tong = 0
+    for i in range(n):
+        x = a + i * dx
+        tong += ((x - ky_vong_val) ** 4) * pdf(x) * dx
+    return tong / (phuong_sai_val ** 2) - 3
 
-# Hệ số nhọn (Kurtosis)
-def ham_tich_phan_he_so_nhon(x):
-    return ((x - ky_vong_X)**4) * mat_do_xac_suat(x)
-
-he_so_nhon, _ = quad(ham_tich_phan_he_so_nhon, 2, 3)
-he_so_nhon /= phuong_sai_X**2
-he_so_nhon -= 3
-print(f"Hệ số nhọn (Kurtosis) = {he_so_nhon}")
+# Sử dụng ví dụ
+print("Hàm mật độ xác suất tại x = 2.5:", ham_mat_do(2.5))
+print("Xác suất P(1 < X < 1.6):", xac_suat(1, 1.6))
+print("Kỳ vọng của X:", ky_vong())
+print("Phương sai của X:", phuong_sai())
+print("Mode của X:", mode())
+print("Hệ số bất đối xứng của X:", he_so_bat_doi_xung())
+print("Hệ số nhọn của X:", he_so_nhon())
